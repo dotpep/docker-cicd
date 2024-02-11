@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docker-python-demo
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: flask
+  template:
+    metadata:
+      labels:
+        service: flask
+    spec:
+      containers:
+       - name: flask-service
+         image: dotpep/docker-cicd
+         imagePullPolicy: Always
+         env:
+          - name: POSTGRES_PASSWORD
+            value: "1234"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-entrypoint
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    service: flask
+  ports:
+  - port: 5000
+    targetPort: 5000
+    nodePort: 30001
